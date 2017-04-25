@@ -7,7 +7,7 @@ use Stripe\Stripe;
 
 class StripeConnectController extends Controller
 {
-    const TOKEN_API = 'https://connect.stripe.com/oauth/token';
+    const TOKEN_URI = 'https://connect.stripe.com/oauth/token';
     const AUTHORIZE_URI = 'https://connect.stripe.com/oauth/authorize';
 
     public function connect()
@@ -33,6 +33,7 @@ class StripeConnectController extends Controller
             $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
             $resp = json_decode(curl_exec($req), true);
             curl_close($req);
+            dd($resp);
             return redirect()->back()->with("yout succesfully connected My platform");
         } else if (isset($error)) { // Error
 
