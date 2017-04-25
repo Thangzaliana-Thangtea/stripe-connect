@@ -71,7 +71,7 @@
         <div>
             <a style="color: #2e6da4;font-weight: bold"
                href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id={{config('services.stripe.client_id')}}&scope=read_write">connect
-               me</a>
+                me</a>
         </div>
         <div>
             @if(Session::has('success'))
@@ -114,7 +114,6 @@
         --}}
     </div>
     <br/>
-</div>
 </div>
 </body>
 </html>
