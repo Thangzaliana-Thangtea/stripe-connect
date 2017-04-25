@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('stripe-connect',function (Request $request){
-    return view('connected',compact('request'));
-});
+Route::get('stripe-connect','StripeConnectController@connect');
+
+Route::post('purchase','PurchaseController@store');
+Route::post('deposit','PurchaseController@deposit');
