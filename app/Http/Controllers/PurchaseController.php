@@ -19,13 +19,12 @@ class PurchaseController extends Controller
         $amount = request('price')*10;
         $balance = Balance::retrieve();
         $available = $balance->available[0]->amount;
-
-/*
+    /*
         $customer = Customer::create([
             'email' => request('stripeEmail'),
             'source' => request('stripeToken')
         ]);
-*/
+    */
         try {
             $token = request('stripeToken');
             // Create a Charge by method Direct charge:
@@ -39,15 +38,7 @@ class PurchaseController extends Controller
          return redirect()->back()->with('success','transaction successfully done');
         }catch(\Stripe\Error\Card $e) {
             // Since it's a decline, \Stripe\Error\Card will be caught
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-
-            print('Status is:' . $e->getHttpStatus() . "\n");
-            print('Type is:' . $err['type'] . "\n");
-            print('Code is:' . $err['code'] . "\n");
-            // param is '' in this case
-            print('Param is:' . $err['param'] . "\n");
-            print('Message is:' . $err['message'] . "\n");
+            return redirect()->back()->withErrors('failure transaction due to : '.$e->getMessage());
         } catch (\Stripe\Error\RateLimit $e) {
             // Too many requests made to the API too quickly
             return redirect()->back()->withErrors('failure transaction due to : '.$e->getMessage());

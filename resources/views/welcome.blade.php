@@ -10,6 +10,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
+    <script src="https://js.stripe.com/v2/"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <!-- Styles -->
     <style>
@@ -113,12 +114,19 @@
                     <input type="number" name="price" id="price" value="10"/>
                 </div>
                 <br/>
-                <label for="card-element">
-                    Credit or debit card
+                <label for="card-number">Card Number</label>
+                <div id="card-number"></div>
+                <label for="expire-date">
+                    Expire date
                 </label>
-                <div id="card-element">
-                    <!-- a Stripe Element will be inserted here. -->
+                <div id="expire-date">
+
                 </div>
+                <label for="cvc">CVC</label>
+                <div id="cvc"></div>
+
+                <label for="postalCode">Postal Code</label>
+                <div id="postal-code"></div>
 
                 <!-- Used to display form errors -->
                 <div id="card-errors"></div>
@@ -148,14 +156,14 @@
     <br/>
 </div>
 <script>
-    // Create a Stripe client
-    var stripe = Stripe('{{config('services.stripe.key')}}');
-
-    // Create an instance of Elements
-    var elements = stripe.elements();
-
     // Custom styling can be passed to options when creating an Element.
     // (Note that this demo uses a wider set of styles than the guide below.)
+
+    // Create an instance of Elements
+
+    // Create a Stripe client
+    var stripe = Stripe('{{config('services.stripe.key')}}');
+    var elements = stripe.elements();
     var style = {
         base: {
             color: 'red',
@@ -174,13 +182,45 @@
     };
 
     // Create an instance of the card Element
-    var card = elements.create('card', {style: style});
+    var card = elements.create('cardNumber', {style: style});
+    var exp = elements.create('cardExpiry', {style: style});
+    var cvc=elements.create('cardCvc',{style:style});
+    var postalCode=elements.create('postalCode',{style:style});
+    //var cardNumber=elements.create('cardNumber',{});
 
     // Add an instance of the card Element into the `card-element` <div>
-    card.mount('#card-element');
+    //card.mount('#card-element');
+    card.mount('#card-number');
+    exp.mount('#expire-date');
+    cvc.mount('#cvc');
+    postalCode.mount('#postal-code');
 
     // Handle real-time validation errors from the card Element.
     card.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+    exp.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+    cvc.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+    postalCode.addEventListener('change', function (event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
             displayError.textContent = event.error.message;
@@ -193,6 +233,7 @@
     var form = document.getElementById('payment-form');
     form.addEventListener('submit', function (event) {
         event.preventDefault();
+        var arr=[card,exp,cvc,postalCode];
 
         stripe.createToken(card).then(function (result) {
             if (result.error) {
