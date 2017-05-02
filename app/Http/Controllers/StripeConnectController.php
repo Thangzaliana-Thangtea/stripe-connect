@@ -7,8 +7,8 @@ use Stripe\Stripe;
 
 class StripeConnectController extends Controller
 {
-    const TOKEN_URI = 'https://connect.stripe.com/oauth/token';
-    const AUTHORIZE_URI = 'https://connect.stripe.com/oauth/authorize';
+    private $token_uri= 'https://connect.stripe.com/oauth/token';
+    private $authorize_uri = 'https://connect.stripe.com/oauth/authorize';
 
     public function connect()
     {
@@ -25,7 +25,7 @@ class StripeConnectController extends Controller
                 'client_id' => $client_id,
                 'code' => $code,
             );
-            $req = curl_init(TOKEN_URI);
+            $req = curl_init($this->token_uri);
             curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($req, CURLOPT_POST, true);
             curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($token_request_body));
@@ -33,8 +33,8 @@ class StripeConnectController extends Controller
             $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
             $resp = json_decode(curl_exec($req), true);
             curl_close($req);
-            dd($resp);
-            return redirect()->back()->with("yout succesfully connected My platform");
+           
+            return redirect()->back()->with("you succesfully connected My platform");
         } else if (isset($error)) { // Error
 
             return redirect()->back()->withErrors("you declined to connect My platform");
@@ -44,7 +44,7 @@ class StripeConnectController extends Controller
                 'scope' => 'read_write',
                 'client_id' => $client_id
             );
-            $url = AUTHORIZE_URI . '?' . http_build_query($authorize_request_body);
+            $url = $this->authorize_uri . '?' . http_build_query($authorize_request_body);
             return "<a href='$url'>Connect with Stripe</a>";
 
         }

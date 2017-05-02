@@ -114,8 +114,10 @@
                     <input type="number" name="price" id="price" value="10"/>
                 </div>
                 <br/>
+
                 <label for="card-number">Card Number</label>
                 <div id="card-number"></div>
+
                 <label for="expire-date">
                     Expire date
                 </label>
@@ -166,7 +168,7 @@
     var elements = stripe.elements();
     var style = {
         base: {
-            color: 'red',
+            color: 'black',
             lineHeight: '24px',
             fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
             fontSmoothing: 'antialiased',
@@ -182,53 +184,30 @@
     };
 
     // Create an instance of the card Element
+
     var card = elements.create('cardNumber', {style: style});
     var exp = elements.create('cardExpiry', {style: style});
     var cvc=elements.create('cardCvc',{style:style});
     var postalCode=elements.create('postalCode',{style:style});
-    //var cardNumber=elements.create('cardNumber',{});
 
     // Add an instance of the card Element into the `card-element` <div>
-    //card.mount('#card-element');
+
     card.mount('#card-number');
     exp.mount('#expire-date');
     cvc.mount('#cvc');
     postalCode.mount('#postal-code');
 
-    // Handle real-time validation errors from the card Element.
-    card.addEventListener('change', function (event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-    exp.addEventListener('change', function (event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-    cvc.addEventListener('change', function (event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-    postalCode.addEventListener('change', function (event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-
+    var card_info=[card,exp,cvc,postalCode];
+    for (var i=0;i<card_info.length;i++){
+        card_info[i].addEventListener('change',function (event) {
+            var displayError=document.getElementById('card-errors');
+            if(event.error) {
+                displayError.textContent=event.error.message;
+            }else {
+                displayError.textContent='';
+            }
+        })
+    }
     // Handle form submission
     var form = document.getElementById('payment-form');
     form.addEventListener('submit', function (event) {
