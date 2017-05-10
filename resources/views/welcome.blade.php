@@ -12,8 +12,19 @@
 
     <script src="https://js.stripe.com/v2/"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- Styles -->
     <style>
+        .form-control{
+            background-color: #0d3625;
+        }
         .StripeElement {
             background-color: white;
             padding: 8px 12px;
@@ -109,7 +120,7 @@
         <form action="purchase" method="post" id="payment-form">
             <div class="form-row">
                 {{csrf_field()}}
-                <label for="price">Amount</label>
+                <label for="price" class="StripeElement">Amount</label>
                 <div id>
                     <input type="number" name="price" id="price" value="10"/>
                 </div>
@@ -185,19 +196,40 @@
 
     // Create an instance of the card Element
 
-    var card = elements.create('cardNumber', {style: style});
-    var exp = elements.create('cardExpiry', {style: style});
-    var cvc=elements.create('cardCvc',{style:style});
-    var postalCode=elements.create('postalCode',{style:style});
-
-    // Add an instance of the card Element into the `card-element` <div>
+    var card = elements.create('cardNumber');
+    var exp = elements.create('cardExpiry');
+    var cvc=elements.create('cardCvc');
+    var postalCode=elements.create('postalCode');
 
     card.mount('#card-number');
     exp.mount('#expire-date');
     cvc.mount('#cvc');
-    postalCode.mount('#postal-code');
 
-    var card_info=[card,exp,cvc,postalCode];
+    //we need to remove the default class name of stripe elements
+
+     var cardEl=document.getElementById('card-number');
+     var expire_dateEl=document.getElementById('expire-date');
+     var cvcEl=document.getElementById('cvc');
+     var postalEl=document.getElementById('postal-code');
+
+
+    //here i change the name of default class name StripeElement to form-group
+    //we have to apply this process to StripeElement--invalid __PrivateStripeElement-input __PrivateStripeElement according to our needed classname
+    var stripeElement=document.querySelectorAll('.StripeElement');
+    for (var i=0;i<stripeElement.length;i++) {
+        stripeElement[i].className='form-group';
+    }
+    var privateStripeElement=document.querySelectorAll('.__PrivateStripeElement');
+    for (var i=0;i<privateStripeElement.length;i++) {
+        privateStripeElement[i].className='form-control';
+    }
+    var stripeInputs=document.querySelectorAll('.__PrivateStripeElement-input');
+    for (var i=0;i<stripeInputs.length;i++) {
+        stripeInputs[i].className='form-control';
+    }
+    //end
+
+    var card_info=[card,exp,cvc];
     for (var i=0;i<card_info.length;i++){
         card_info[i].addEventListener('change',function (event) {
             var displayError=document.getElementById('card-errors');
